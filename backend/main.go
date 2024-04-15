@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -70,4 +71,48 @@ func enableCORS(next http.Handler) http.Handler {
 	})
 }
 
-func 
+func jsonContentMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json") //  the body of the response is a JSON-formatted string
+		next.ServeHTTP(w, r)
+	})
+}
+
+func getUsers(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		rows, err := db.Query("SELECT * FROM users")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer rows.Close()
+
+		users := []User{}
+		for rows.Next() {
+			var u User
+			if err := rows.Scan(&u.Id, &u.Name, &u.Phone, &u.Role, &u.Email); err != nil {
+				log.Fatal(err)
+			}
+			users = append(users, u)
+		}
+		if err := rows.Err(); err != nil {
+			log.Fatal(err)
+		}
+		json.NewEncoder(w).Encode(users)
+	}
+}
+
+// get a single user
+
+func getUser(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id := vars["id"]
+		var u User
+		err := db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&u.Id, &u.Name, &u.Phone, &u.Role, &u.Email)
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		json.NewEncoder(w).Encode(u)
+	}
+}
