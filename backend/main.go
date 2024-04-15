@@ -40,11 +40,11 @@ func main() {
 	}
 
 	router := mux.NewRouter().PathPrefix("/api").Subrouter() // creates a new subrouter so I don't have to put api in front of each path
-	router.HandleFunc("/users", getUsers).Methods("GET")
-	router.HandleFunc("/users", createUser).Methods("POST")
-	router.HandleFunc("/users/{id}", getUser).Methods("GET")
-	router.HandleFunc("/users/{id}", updateUser).Methods("PUT")
-	router.HandleFunc("/users/{id}", deleteUser).Methods("DELETE")
+	router.HandleFunc("/users", getUsers(db)).Methods("GET")
+	router.HandleFunc("/users", createUser(db)).Methods("POST")
+	router.HandleFunc("/users/{id}", getUser(db)).Methods("GET")
+	router.HandleFunc("/users/{id}", updateUser(db)).Methods("PUT")
+	router.HandleFunc("/users/{id}", deleteUser(db)).Methods("DELETE")
 	log.Fatal(http.ListenAndServe(":8000", router))
 
 	enhancedRouter := enableCORS(jsonContentMiddleware(router))
