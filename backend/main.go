@@ -101,8 +101,6 @@ func getUsers(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-// get a single user
-
 func getUser(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -127,5 +125,28 @@ func createUser(db *sql.DB) http.HandlerFunc {
 			log.Fatal(err)
 		}
 		json.NewEncoder(w).Encode(u)
+	}
+}
+
+func updateUser(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var u User
+		json.NewDecoder(r.Body).Decode(&u)
+		vars := mux.Vars(r)
+		id := vars["id"]
+
+		_, err := db.Exec("UPDATE users SET name = $1, phone = $2, role = $3, email = $4 WHERE id = $5", u.Name, u.Phone, u.Role, u.Email, id)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// retrieves the updated user from the database so the frontend UI is refreshed automatically
+		var updatedUser User
+		err = db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&updatedUser.Id, &updatedUser.Name, &updatedUser.Phone, &updatedUser.Role, &updatedUser.Email)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		json.NewEncoder(w).Encode(updatedUser)
 	}
 }
