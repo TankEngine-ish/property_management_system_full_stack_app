@@ -10,6 +10,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	// The underscore (_) is used to import a package solely for its side-effects. We are not using any
+	// identifiers associated with the whole postgresql package.
 )
 
 type User struct {
