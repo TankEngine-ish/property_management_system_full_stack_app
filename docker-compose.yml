@@ -1,18 +1,26 @@
-services: 
+services:
+  goapp:
+    container_name: goapp
+    image: goapp:1.0.0
+    build:
+      context: ./backend
+      dockerfile: go.dockerfile
+    environment:
+      DATABASE_URL: 'postgres://postgres:postgres@db:5432/postgres?sslmode=disable' # this corresponds to postgres://user:password@host:port/dbname?sslmode=disable
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
   db:
     container_name: db
     image: postgres:15
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      #credentials are stored in the .env fileports:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     ports:
-      - 5432:5432 
-        # external:internal
+      - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
 volumes:
-  pgdata: {} #pgdata is not a folder but a Docker volume
-
-
+  pgdata: {}

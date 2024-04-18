@@ -8,7 +8,6 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	// The underscore (_) is used to import a package solely for its side-effects. We are not using any
 	// identifiers associated with the whole postgresql package.
@@ -23,20 +22,16 @@ type User struct {
 }
 
 func main() {
-	// load the .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	// connect to the database
+
+	//connect to database
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
-	// CREATE TABLE users
-	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT, phone TEXT, role TEXT, email TEXT UNIQUE)`)
+	// create table if not exists
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT, phone TEXT, role TEXT, email TEXT)")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -47,7 +42,6 @@ func main() {
 	router.HandleFunc("/users/{id}", getUser(db)).Methods("GET")
 	router.HandleFunc("/users/{id}", updateUser(db)).Methods("PUT")
 	router.HandleFunc("/users/{id}", deleteUser(db)).Methods("DELETE")
-	log.Fatal(http.ListenAndServe(":8000", router))
 
 	enhancedRouter := enableCORS(jsonContentMiddleware(router))
 
