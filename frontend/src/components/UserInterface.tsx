@@ -57,24 +57,25 @@ const UserInterface: React.FC<UserInterfaceProps> = ({ backendName }) => {
     }
   };
 
-  // Update a user
-  const handleUpdateUser = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-    await axios.put(`${apiUrl}/api/${backendName}/users/${updateUser.id}`, { ...updateUser, statement: Number(updateUser.statement) });
-      setUpdateUser({ id: '', name: '', statement: '' });
-      setUsers(
-        users.map((user) => {
-          if (user.id === parseInt(updateUser.id)) {
-            return { ...user, name: updateUser.name, statement: Number(updateUser.statement) };
-          }
-          return user;
-        })
-      );
-    } catch (error) {
-      console.error('Error updating user:', error);
-    }
-  };
+ // Update a user
+const handleUpdateUser = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  try {
+   const currentName = updateUser.name || users.find(user => user.id === parseInt(updateUser.id))?.name || '';
+    await axios.put(`${apiUrl}/api/${backendName}/users/${updateUser.id}`, { name: currentName, statement: Number(updateUser.statement) });
+    setUpdateUser({ id: '', name: '', statement: '' });
+    setUsers(
+      users.map((user) => {
+        if (user.id === parseInt(updateUser.id)) {
+          return { ...user, name: currentName, statement: Number(updateUser.statement) };
+        }
+        return user;
+      })
+    );
+  } catch (error) {
+    console.error('Error updating user:', error);
+  }
+};
 
   // Delete a user
   const deleteUser = async (userId: number) => {
@@ -89,7 +90,7 @@ const UserInterface: React.FC<UserInterfaceProps> = ({ backendName }) => {
   return (
     <div className={`user-interface ${bgColor} ${backendName} w-full max-w-md p-4 my-4 rounded shadow`}>
       <img src={`/${backendName}logo.svg`} alt={`${backendName} Logo`} className="w-20 h-20 mb-6 mx-auto" />
-      <h2 className="text-xl font-bold text-center text-white mb-6">{`${backendName.charAt(0).toUpperCase() + backendName.slice(1)} Fund`}</h2>
+      <h2 className="text-xl font-bold text-center text-white mb-6">{`${backendName.charAt(0).toUpperCase() + backendName.slice(1)} Fund, bl.4E, ul. Dragoman, Sofia`}</h2>
 
       {/* Create user */}
       <form onSubmit={createUser} className="mb-6 p-4 bg-blue-100 rounded shadow">
