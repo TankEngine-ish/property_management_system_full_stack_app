@@ -9,20 +9,16 @@ import (
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
-	// The underscore (_) is used to import a package solely for its side-effects. We are not using any
-	// identifiers associated with the whole postgresql package.
 )
 
 type User struct {
-	Id    int    `json:"id"`
-	Name  string `json:"name"`
-	Phone string `json:"phone"`
-	Role  string `json:"role"`
-	Email string `json:"email"`
+	Id        int    `json:"id"`
+	Name      string `json:"name"`
+	Statement int    `json:"statement"`
 }
 
+// main function
 func main() {
-
 	//connect to database
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
@@ -31,49 +27,54 @@ func main() {
 	defer db.Close()
 
 	// create table if not exists
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT, phone TEXT, role TEXT, email TEXT)")
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT, statement INT)")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	router := mux.NewRouter().PathPrefix("/api").Subrouter() // creates a new subrouter so I don't have to put api in front of each path
-	router.HandleFunc("/users", getUsers(db)).Methods("GET")
-	router.HandleFunc("/users", createUser(db)).Methods("POST")
-	router.HandleFunc("/users/{id}", getUser(db)).Methods("GET")
-	router.HandleFunc("/users/{id}", updateUser(db)).Methods("PUT")
-	router.HandleFunc("/users/{id}", deleteUser(db)).Methods("DELETE")
+	// create router
+	router := mux.NewRouter()
+	router.HandleFunc("/api/repair/users", getUsers(db)).Methods("GET")
+	router.HandleFunc("/api/repair/users", createUser(db)).Methods("POST")
+	router.HandleFunc("/api/repair/users/{id}", getUser(db)).Methods("GET")
+	router.HandleFunc("/api/repair/users/{id}", updateUser(db)).Methods("PUT")
+	router.HandleFunc("/api/repair/users/{id}", deleteUser(db)).Methods("DELETE")
 
-	enhancedRouter := enableCORS(jsonContentMiddleware(router))
+	// wrap the router with CORS and JSON content type middlewares
+	enhancedRouter := enableCORS(jsonContentTypeMiddleware(router))
 
+	// start server
 	log.Fatal(http.ListenAndServe(":8000", enhancedRouter))
 }
 
-//CORS middleware function below
 func enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		//the CORS headers
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+		// Set CORS headers
+		w.Header().Set("Access-Control-Allow-Origin", "*") // Allow any origin
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
-		// If the request method is OPTIONS, we're dealing with a preflight request.
-		//This is a request that the browser sends to check if the server allows the request.
+		// Check if the request is for CORS preflight
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
 
+		// Pass down the request to the next middleware (or final handler)
 		next.ServeHTTP(w, r)
 	})
+
 }
 
-func jsonContentMiddleware(next http.Handler) http.Handler {
+func jsonContentTypeMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json") //  the body of the response is a JSON-formatted string
+		// Set JSON Content-Type
+		w.Header().Set("Content-Type", "application/json")
 		next.ServeHTTP(w, r)
 	})
 }
 
+// get all users
 func getUsers(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rows, err := db.Query("SELECT * FROM users")
@@ -82,10 +83,10 @@ func getUsers(db *sql.DB) http.HandlerFunc {
 		}
 		defer rows.Close()
 
-		users := []User{}
+		users := []User{} // array of users
 		for rows.Next() {
 			var u User
-			if err := rows.Scan(&u.Id, &u.Name, &u.Phone, &u.Role, &u.Email); err != nil {
+			if err := rows.Scan(&u.Id, &u.Name, &u.Statement); err != nil {
 				log.Fatal(err)
 			}
 			users = append(users, u)
@@ -93,73 +94,85 @@ func getUsers(db *sql.DB) http.HandlerFunc {
 		if err := rows.Err(); err != nil {
 			log.Fatal(err)
 		}
+
 		json.NewEncoder(w).Encode(users)
 	}
 }
 
+//get user by id
 func getUser(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id := vars["id"]
+
 		var u User
-		err := db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&u.Id, &u.Name, &u.Phone, &u.Role, &u.Email)
-		// starting with err := we can capture a potential error so we can handle it immediately
+		err := db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&u.Id, &u.Name, &u.Statement)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
+
 		json.NewEncoder(w).Encode(u)
 	}
 }
 
+// create user
 func createUser(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u User
 		json.NewDecoder(r.Body).Decode(&u)
-		err := db.QueryRow("INSERT INTO users(name, phone, role, email) VALUES($1, $2, $3, $4) RETURNING id", u.Name, u.Phone, u.Role, u.Email).Scan(&u.Id)
+
+		err := db.QueryRow("INSERT INTO users (name, statement) VALUES ($1, $2) RETURNING id", u.Name, u.Statement).Scan(&u.Id)
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		json.NewEncoder(w).Encode(u)
 	}
 }
 
+//update user
 func updateUser(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u User
 		json.NewDecoder(r.Body).Decode(&u)
+
 		vars := mux.Vars(r)
 		id := vars["id"]
 
-		_, err := db.Exec("UPDATE users SET name = $1, phone = $2, role = $3, email = $4 WHERE id = $5", u.Name, u.Phone, u.Role, u.Email, id)
+		// Execute the update query
+		_, err := db.Exec("UPDATE users SET name = $1, statement = $2 WHERE id = $3", u.Name, u.Statement, id)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		// retrieves the updated user from the database so the frontend UI is refreshed automatically
+		// Retrieve the updated user data from the database
 		var updatedUser User
-		err = db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&updatedUser.Id, &updatedUser.Name, &updatedUser.Phone, &updatedUser.Role, &updatedUser.Email)
+		err = db.QueryRow("SELECT id, name, statement FROM users WHERE id = $1", id).Scan(&updatedUser.Id, &updatedUser.Name, &updatedUser.Statement)
 		if err != nil {
 			log.Fatal(err)
 		}
 
+		// Send the updated user data in the response
 		json.NewEncoder(w).Encode(updatedUser)
 	}
 }
 
+// delete user
 func deleteUser(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id := vars["id"]
+
 		var u User
-		err := db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&u.Id, &u.Name, &u.Phone, &u.Role, &u.Email)
+		err := db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&u.Id, &u.Name, &u.Statement)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			return
-
 		} else {
 			_, err := db.Exec("DELETE FROM users WHERE id = $1", id)
 			if err != nil {
+				//todo : fix error handling
 				w.WriteHeader(http.StatusNotFound)
 				return
 			}
