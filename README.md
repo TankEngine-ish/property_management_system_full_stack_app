@@ -14,3 +14,24 @@ All three main services are on separate containers and also pushed to docker hub
 
 # Usage
 
+You can clone this repository and then `pull` the docker images from docker hub:
+
+`docker pull tankengine/nextapp:1.0.0`
+`docker pull tankengine/goapp:1.0.0`
+`docker pull tankengine/postgres:15`
+
+After that you can start the services with `docker-compose up` and go to `http://localhost:3000`.
+
+![alt text](assets/312321321.png)
+
+The above screenshot is a random address with random people added.
+
+# Brief Demo
+
+Alternatively, if you don't want to toy around with docker images and stuff here's a short .gif demonstration.
+
+
+![alt text](assets/Untitled-ezgif.com-optimize.gif)
+
+And also a VIDEO of me explaining my process:
+
