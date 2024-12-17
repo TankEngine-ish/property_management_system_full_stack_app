@@ -20,14 +20,14 @@ const UserInterface: React.FC<UserInterfaceProps> = ({ backendName }) => {
 
   // Define styles based on the backend name
   const backgroundColors: { [key: string]: string } = {
-    repair: 'bg-red-500',
+    repair: 'bg-stone-900',
   };
 
   const buttonColors: { [key: string]: string } = {
     repair: 'bg-cyan-700 hover:bg-blue-600',
   };
 
-  const bgColor = backgroundColors[backendName as keyof typeof backgroundColors] || 'bg-gray-200';
+  const bgColor = backgroundColors[backendName as keyof typeof backgroundColors] || 'bg-lime-500';
   const btnColor = buttonColors[backendName as keyof typeof buttonColors] || 'bg-gray-500 hover:bg-gray-600';
 
   // Fetch all users
