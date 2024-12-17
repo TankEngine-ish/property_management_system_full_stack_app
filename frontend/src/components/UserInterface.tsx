@@ -20,7 +20,7 @@ const UserInterface: React.FC<UserInterfaceProps> = ({ backendName }) => {
 
   // Define styles based on the backend name
   const backgroundColors: { [key: string]: string } = {
-    repair: 'bg-cyan-500',
+    repair: 'bg-red-500',
   };
 
   const buttonColors: { [key: string]: string } = {
@@ -101,7 +101,7 @@ const handleUpdateUser = async (e: React.FormEvent<HTMLFormElement>) => {
           className="mb-2 w-full p-2 border border-gray-300 rounded"
         />
         <input
-          placeholder="statement"
+          placeholder="Statement"
           value={newUser.statement}
           onChange={(e) => setNewUser({ ...newUser, statement: e.target.value })}
           className="mb-2 w-full p-2 border border-gray-300 rounded"
