@@ -1,6 +1,6 @@
 module github.com/TankEngine-ish/Property_Management_System_Full_Stack_App
 
-go 1.18
+go 1.22
 
 require (
 	github.com/gorilla/mux v1.8.1

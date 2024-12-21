@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/joho/godotenv"
+
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
@@ -19,6 +21,10 @@ type User struct {
 
 // main function
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	//connect to database
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
@@ -99,7 +105,7 @@ func getUsers(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-//get user by id
+// get user by id
 func getUser(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -131,7 +137,7 @@ func createUser(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-//update user
+// update user
 func updateUser(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u User
