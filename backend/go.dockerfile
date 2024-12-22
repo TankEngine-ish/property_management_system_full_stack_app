@@ -2,6 +2,8 @@ FROM golang:1.17-alpine3.13
 
 WORKDIR /app
 
+
+
 # Will copy files into the /app folder as this is docker's workdir
 COPY . . 
 
