@@ -35,3 +35,14 @@ Alternatively, if you don't want to toy around with docker images and stuff here
 
 And also a VIDEO of me explaining my process:
 
+
+
+Problems I fixed:
+
+I mounted the .env file in the docker compose file. 
+Then i removed the cached postgres db and restarted the docker images.
+Now it was able to reconnect.
+
+
+Also pushing to docker hub with re-tagging an image.
+Useful commands "docker images" and "docker tag d4332ddfd789 tankengine/goapp:latest" and then push with "docker push tankengine/goapp:latest"
