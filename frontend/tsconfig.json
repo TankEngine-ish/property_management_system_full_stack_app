@@ -6,11 +6,12 @@
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "module": "commonjs", // Change this for Jest compatibility
+    "moduleResolution": "node", // Use "node" for better Jest support
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx", // Update this for better JSX support
+    "types": ["jest", "node"], // Ensure Jest and Node types are included
     "incremental": true,
     "paths": {
       "@/*": ["./src/*"]
@@ -19,3 +20,4 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }
+

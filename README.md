@@ -46,3 +46,31 @@ Now it was able to reconnect.
 
 Also pushing to docker hub with re-tagging an image.
 Useful commands "docker images" and "docker tag d4332ddfd789 tankengine/goapp:latest" and then push with "docker push tankengine/goapp:latest"
+
+
+Jenkins part:
+
+I've decided to use a local installation of Jenkins instead of having it as container and mindlessly fiddling with docker groups, Docker-IN-Docker images, sockets
+and user permissions.
+I added the jenkins user to the docker group: sudo usermod -aG docker jenkins and did a test script:
+
+Started by user jenkins
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/docker test
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Docker Test)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
