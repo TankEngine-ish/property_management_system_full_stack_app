@@ -12,3 +12,4 @@ test('renders CardComponent with correct data', () => {
     expect(getByText('100')).toBeInTheDocument();
 });
 
+// the test verifies that the id, name and statement components show up correctly
