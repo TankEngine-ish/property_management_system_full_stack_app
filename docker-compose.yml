@@ -46,13 +46,13 @@ services:
     image: cypress/included:13.17.0
     working_dir: /e2e
     environment:
-      - CYPRESS_BASE_URL=http://localhost:3000
+      - CYPRESS_BASE_URL=http://frontend:3000
     volumes:
-      - ./cypress:/e2e/cypress  # Maps the cypress folder
-      - ./cypress.config.js:/e2e/cypress.config.js  # Maps the config file in the root
+      - ./cypress:/e2e # Mount the entire cypress folder
     depends_on:
       - nextapp
       - goapp
+
 
 
 volumes:
