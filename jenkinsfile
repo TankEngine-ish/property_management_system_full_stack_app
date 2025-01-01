@@ -1,15 +1,14 @@
 pipeline {
     agent any
     environment {
-        // Jenkins credentials for Docker Hub
-        DOCKER_USERNAME = credentials('dockerhub-username') // Replace with your Docker Hub username credential ID in Jenkins
-        DOCKER_PASSWORD = credentials('dockerhub-password') // Replace with your Docker Hub password credential ID in Jenkins
-        DOCKER_REPO = 'tankengine' // Docker Hub repository namespace
+        DOCKER_USERNAME = credentials('dockerhub-username')
+        DOCKER_PASSWORD = credentials('dockerhub-password')
+        DOCKER_REPO = 'tankengine'
+        ENV_FILE_PATH = '.env' // Path to your .env file
     }
     stages {
         stage('Checkout Code') {
             steps {
-                // Clone the main branch of your GitHub repository
                 git branch: 'main', url: 'https://github.com/TankEngine-ish/property_management_system_full_stack_app'
             }
         }
@@ -19,7 +18,6 @@ pipeline {
                 stage('Go Unit Tests') {
                     steps {
                         dir('backend') {
-                            // Run Go tests
                             sh 'go test ./... -v'
                         }
                     }
@@ -27,7 +25,6 @@ pipeline {
                 stage('Frontend Unit Tests') {
                     steps {
                         dir('frontend') {
-                            // Install dependencies and run tests for the frontend
                             sh 'npm install'
                             sh 'npm test'
                         }
@@ -38,23 +35,28 @@ pipeline {
 
         stage('Run E2E Tests') {
             steps {
-                // Build the frontend from the frontend directory
-                sh 'npm run build --prefix frontend'
-                // Run Cypress tests from the root directory
-                sh 'xvfb-run npx cypress run'
+                script {
+                    // Bring up services with the .env file
+                    sh 'docker compose --env-file $ENV_FILE_PATH up -d'
+
+                    // Run Cypress tests
+                    sh 'docker compose run --rm cypress'
+
+                    // Tear down services
+                    sh 'docker compose down'
+                }
             }
         }
 
         stage('Build Docker Images') {
             steps {
                 // Build all Docker images using docker-compose
-                sh 'docker-compose build'
+                sh 'docker compose --env-file $ENV_FILE_PATH build'
             }
         }
 
         stage('Push Docker Images') {
             steps {
-                // Log in to Docker Hub and push Docker images
                 sh """
                 docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
