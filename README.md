@@ -80,3 +80,5 @@ fixed an issue where babel was interfering with the nextjs engine when building 
 Now the jest test works and the compose works as well.
 
 did the jest db, frontend and backend tests. Did the E2E test.
+
+Created credentials for the dockerhub account inside Jenkins.
