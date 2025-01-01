@@ -1,0 +1,80 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER_USERNAME = credentials('dockerhub-username') // Replace with your Docker Hub username in Jenkins
+        DOCKER_PASSWORD = credentials('dockerhub-password') // Replace with your Docker Hub password in Jenkins
+        DOCKER_REPO = 'tankengine' // Docker Hub repository namespace
+    }
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/your-repo/property-management-system'
+            }
+        }
+
+        stage('Run Unit Tests') {
+            parallel {
+                stage('Go Unit Tests') {
+                    steps {
+                        dir('backend') {
+                            sh 'go test ./... -v'
+                        }
+                    }
+                }
+                stage('Frontend Unit Tests') {
+                    steps {
+                        dir('frontend') {
+                            sh 'npm install'
+                            sh 'npm test'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Run E2E Tests') {
+            steps {
+                dir('frontend') {
+                    sh 'npm run build'
+                    sh 'npx cypress run'
+                }
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                sh 'docker-compose build'
+            }
+        }
+
+        stage('Push Docker Images') {
+            steps {
+                sh """
+                source .dockerhub.env
+                docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+                docker tag nextapp:latest ${DOCKER_REPO}/nextapp:latest
+                docker push ${DOCKER_REPO}/nextapp:latest
+
+                docker tag goapp:latest ${DOCKER_REPO}/goapp:latest
+                docker push ${DOCKER_REPO}/goapp:latest
+
+                docker tag postgres:latest ${DOCKER_REPO}/postgres:latest
+                docker push ${DOCKER_REPO}/postgres:latest
+                """
+            }
+        }
+
+    }
+    post {
+        always {
+            echo 'Pipeline completed!'
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}

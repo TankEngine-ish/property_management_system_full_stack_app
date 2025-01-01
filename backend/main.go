@@ -141,25 +141,40 @@ func createUser(db *sql.DB) http.HandlerFunc {
 func updateUser(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u User
-		json.NewDecoder(r.Body).Decode(&u)
+		err := json.NewDecoder(r.Body).Decode(&u)
+		if err != nil {
+			http.Error(w, "Invalid request payload", http.StatusBadRequest)
+			return
+		}
 
 		vars := mux.Vars(r)
 		id := vars["id"]
 
+		// Check if the user exists
+		var exists bool
+		err = db.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE id = $1)", id).Scan(&exists)
+		if err != nil || !exists {
+			http.Error(w, "User not found", http.StatusNotFound)
+			return
+		}
+
 		// Execute the update query
-		_, err := db.Exec("UPDATE users SET name = $1, statement = $2 WHERE id = $3", u.Name, u.Statement, id)
+		_, err = db.Exec("UPDATE users SET name = $1, statement = $2 WHERE id = $3", u.Name, u.Statement, id)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, "Failed to update user", http.StatusInternalServerError)
+			return
 		}
 
 		// Retrieve the updated user data from the database
 		var updatedUser User
 		err = db.QueryRow("SELECT id, name, statement FROM users WHERE id = $1", id).Scan(&updatedUser.Id, &updatedUser.Name, &updatedUser.Statement)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, "Failed to retrieve updated user", http.StatusInternalServerError)
+			return
 		}
 
 		// Send the updated user data in the response
+		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(updatedUser)
 	}
 }
