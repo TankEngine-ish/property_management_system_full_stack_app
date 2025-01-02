@@ -41,20 +41,6 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  cypress:
-    container_name: cypress
-    image: cypress/included:13.17.0
-    working_dir: /e2e
-    environment:
-      - CYPRESS_BASE_URL=http://frontend:3000
-    volumes:
-      - ./cypress:/e2e # Mount the entire cypress folder
-    depends_on:
-      - nextapp
-      - goapp
-
-
-
 volumes:
   pgdata: {}
 

@@ -1,10 +1,8 @@
 pipeline {
     agent any
     environment {
-        DOCKER_USERNAME = credentials('dockerhub-username')
-        DOCKER_PASSWORD = credentials('dockerhub-password')
-        DOCKER_REPO = 'tankengine'
-        ENV_FILE_PATH = '.env' // Path to your .env file
+        DOCKER_USERNAME = credentials('dockerhub-username') // Your Docker Hub username
+        DOCKER_ACCESS_TOKEN = credentials('dockerhub-token') // Your Docker Hub access token
     }
     stages {
         stage('Checkout Code') {
@@ -35,40 +33,34 @@ pipeline {
 
         stage('Run E2E Tests') {
             steps {
-                script {
-                    // Bring up services with the .env file
-                    sh 'docker compose --env-file $ENV_FILE_PATH up -d'
-
-                    // Run Cypress tests
-                    sh 'docker compose run --rm cypress'
-
-                    // Tear down services
-                    sh 'docker compose down'
+                withEnv(['XDG_RUNTIME_DIR=/tmp']) {
+                    sh '''
+                        npm install
+                        npx cypress run --config-file ./cypress.config.js --spec cypress/e2e/userExperience.cy.js
+                    '''
                 }
             }
         }
 
         stage('Build Docker Images') {
             steps {
-                // Build all Docker images using docker-compose
-                sh 'docker compose --env-file $ENV_FILE_PATH build'
+                sh 'docker compose build'
             }
         }
 
         stage('Push Docker Images') {
             steps {
-                sh """
-                docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+                withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKER_ACCESS_TOKEN')]) {
+                    sh '''
+                        echo "$DOCKER_ACCESS_TOKEN" | docker login -u tankengine --password-stdin
 
-                docker tag nextapp:latest ${DOCKER_REPO}/nextapp:latest
-                docker push ${DOCKER_REPO}/nextapp:latest
+                        docker tag nextapp:1.0.0 tankengine/nextapp:1.0.0
+                        docker push tankengine/nextapp:1.0.0
 
-                docker tag goapp:latest ${DOCKER_REPO}/goapp:latest
-                docker push ${DOCKER_REPO}/goapp:latest
-
-                docker tag postgres:latest ${DOCKER_REPO}/postgres:latest
-                docker push ${DOCKER_REPO}/postgres:latest
-                """
+                        docker tag goapp:1.0.0 tankengine/goapp:1.0.0
+                        docker push tankengine/goapp:1.0.0
+                    '''
+                }
             }
         }
     }
