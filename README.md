@@ -82,3 +82,5 @@ Now the jest test works and the compose works as well.
 did the jest db, frontend and backend tests. Did the E2E test.
 
 Created credentials for the dockerhub account inside Jenkins.
+
+Set up Cypress in the headless environment in Jenkins.rm -rf cypress
