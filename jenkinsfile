@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment {
-        DOCKER_USERNAME = credentials('dockerhub-username') // Your Docker Hub username
-        DOCKER_ACCESS_TOKEN = credentials('dockerhub-token') // Your Docker Hub access token
+        DOCKER_USERNAME = credentials('dockerhub-username') 
+        DOCKER_ACCESS_TOKEN = credentials('dockerhub-token') 
     }
     stages {
         stage('Checkout Code') {
