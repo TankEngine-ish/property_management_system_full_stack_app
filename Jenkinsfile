@@ -3,6 +3,7 @@ pipeline {
     environment {
         DOCKER_USERNAME = credentials('dockerhub-username') 
         DOCKER_ACCESS_TOKEN = credentials('dockerhub-token') 
+        GOPROXY = 'http://localhost:8081/repository/go-proxy' // Add this line for Go Proxy
     }
     stages {
         stage('Checkout Code') {
@@ -16,6 +17,7 @@ pipeline {
                 stage('Go Unit Tests') {
                     steps {
                         dir('backend') {
+                            sh 'go mod tidy' // Ensure dependencies are fetched
                             sh 'go test ./... -v'
                         }
                     }
