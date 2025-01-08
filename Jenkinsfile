@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/TankEngine-ish/property_management_system_full_stack_app'
+                git branch: 'feature', url: 'https://github.com/TankEngine-ish/property_management_system_full_stack_app'
             }
         }
 
