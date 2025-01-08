@@ -17,7 +17,7 @@ pipeline {
                 stage('Go Unit Tests') {
                     steps {
                         dir('backend') {
-                            sh 'go mod tidy' // Ensure dependencies are fetched
+                            sh 'go mod tidy' // Ensu
                             sh 'go test ./... -v'
                         }
                     }
