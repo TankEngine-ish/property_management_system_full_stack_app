@@ -17,7 +17,7 @@ pipeline {
                 stage('Go Unit Tests') {
                     steps {
                         dir('backend') {
-                            sh 'go mod tidy' // En
+                            sh 'go mod tidy' // E
                             sh 'go test ./... -v'
                         }
                     }
