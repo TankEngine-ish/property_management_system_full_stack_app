@@ -3,7 +3,7 @@ pipeline {
     environment {
         DOCKER_USERNAME = credentials('dockerhub-username') 
         DOCKER_ACCESS_TOKEN = credentials('dockerhub-token') 
-        GOPROXY = 'http://localhost:8081/repository/go-proxy' // Add this line for Go Proxy
+        GOPROXY = 'http://localhost:8081/repository/go-proxy' 
     }
     stages {
         stage('Checkout Code') {
