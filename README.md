@@ -90,3 +90,7 @@ I did a DHCP reservation for a local static IP so I can host my jenkins on an ng
 in order to expose it to GItHub's webhook so I can build on push to the repo.
 
 I forwarded requests on port 80 and port 443 from my public IP to port 80 and 443 on my local Ubuntu server.
+
+Nexus:
+
+I had to create an npmrc file which is a configuration file used by the npm(Node Package Manager) command-line tool. It allows you to customize various settings related to how npm behaves while managing packages and dependencies for your Node.
