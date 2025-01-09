@@ -5,7 +5,7 @@ pipeline {
         // DOCKER_ACCESS_TOKEN = credentials('dockerhub-token') 
         GOPROXY = 'http://localhost:8081/repository/go-proxy'
         NPM_REGISTRY = 'http://localhost:8081/repository/npm-proxy/'
-        DOCKER_REGISTRY = 'http://localhost:5001' // Nexus Docker group // Updated to npm-proxy
+        DOCKER_REGISTRY = 'localhost:5001' // Nexus Docker group // Updated to npm-proxy
     }
     stages {
         stage('Checkout Code') {
@@ -70,7 +70,7 @@ pipeline {
             }
         }
     }
-    
+
     post {
         always {
             echo 'Pipeline completed!'
