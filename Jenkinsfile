@@ -5,7 +5,7 @@ pipeline {
         // DOCKER_ACCESS_TOKEN = credentials('dockerhub-token') 
         GOPROXY = 'http://localhost:8081/repository/go-proxy'
         NPM_REGISTRY = 'http://localhost:8081/repository/npm-proxy/'
-        DOCKER_REGISTRY = 'localhost:5001' // Nexus Docker group // Updated to npm-proxy
+        DOCKER_HOSTED = 'localhost:5002' // Hosted repository for private images// Nexus Docker group // Updated to npm-proxy
     }
     stages {
         stage('Checkout Code') {
@@ -58,13 +58,13 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'nexus-docker-credentials', usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
                     sh '''
-                        echo "$NEXUS_PASSWORD" | docker login $DOCKER_REGISTRY -u $NEXUS_USERNAME --password-stdin
+                        echo "$NEXUS_PASSWORD" | docker login $DOCKER_HOSTED -u $NEXUS_USERNAME --password-stdin
                         
-                        docker tag nextapp:1.0.0 $DOCKER_REGISTRY/nextapp:1.0.0
-                        docker push $DOCKER_REGISTRY/nextapp:1.0.0
+                        docker tag nextapp:1.0.0 $DOCKER_HOSTED/nextapp:1.0.0
+                        docker push $DOCKER_HOSTED/nextapp:1.0.0
 
-                        docker tag goapp:1.0.0 $DOCKER_REGISTRY/goapp:1.0.0
-                        docker push $DOCKER_REGISTRY/goapp:1.0.0
+                        docker tag goapp:1.0.0 $DOCKER_HOSTED/goapp:1.0.0
+                        docker push $DOCKER_HOSTED/goapp:1.0.0
                     '''
                 }
             }
