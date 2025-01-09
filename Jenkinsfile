@@ -1,13 +1,14 @@
 pipeline {
     agent any
     environment {
-        DOCKER_USERNAME = credentials('dockerhub-username') // Your Docker Hub username
-        DOCKER_ACCESS_TOKEN = credentials('dockerhub-token') // Your Docker Hub access token
+        DOCKER_USERNAME = credentials('dockerhub-username') 
+        DOCKER_ACCESS_TOKEN = credentials('dockerhub-token') 
+        GOPROXY = 'http://localhost:8081/repository/go-proxy' 
     }
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/TankEngine-ish/property_management_system_full_stack_app'
+                git branch: 'feature', url: 'https://github.com/TankEngine-ish/property_management_system_full_stack_app'
             }
         }
 
@@ -16,6 +17,7 @@ pipeline {
                 stage('Go Unit Tests') {
                     steps {
                         dir('backend') {
+                            sh 'go mod tidy' // E
                             sh 'go test ./... -v'
                         }
                     }

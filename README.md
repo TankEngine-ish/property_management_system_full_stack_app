@@ -85,3 +85,8 @@ Created credentials for the dockerhub account inside Jenkins.
 
 Set up Cypress in the headless environment in Jenkins.rm -rf cypress.
 Installed the xvfb dependency. Config the file for no support file.
+
+I did a DHCP reservation for a local static IP so I can host my jenkins on an nginx server
+in order to expose it to GItHub's webhook so I can build on push to the repo.
+
+I forwarded requests on port 80 and port 443 from my public IP to port 80 and 443 on my local Ubuntu server.
