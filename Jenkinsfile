@@ -3,7 +3,8 @@ pipeline {
     environment {
         DOCKER_USERNAME = credentials('dockerhub-username') 
         DOCKER_ACCESS_TOKEN = credentials('dockerhub-token') 
-        GOPROXY = 'http://localhost:8081/repository/go-proxy' 
+        GOPROXY = 'http://localhost:8081/repository/go-proxy'
+        NPM_REGISTRY = 'http://localhost:8081/repository/npm-proxy/' // Updated to npm-proxy
     }
     stages {
         stage('Checkout Code') {
@@ -17,7 +18,7 @@ pipeline {
                 stage('Go Unit Tests') {
                     steps {
                         dir('backend') {
-                            sh 'go mod tidy' // E
+                            sh 'go mod tidy'
                             sh 'go test ./... -v'
                         }
                     }
@@ -25,8 +26,10 @@ pipeline {
                 stage('Frontend Unit Tests') {
                     steps {
                         dir('frontend') {
-                            sh 'npm install'
-                            sh 'npm test'
+                            withEnv(["npm_config_registry=${NPM_REGISTRY}"]) {
+                                sh 'npm install'
+                                sh 'npm test'
+                            }
                         }
                     }
                 }
@@ -35,7 +38,7 @@ pipeline {
 
         stage('Run E2E Tests') {
             steps {
-                withEnv(['XDG_RUNTIME_DIR=/tmp']) {
+                withEnv(["npm_config_registry=${NPM_REGISTRY}", "XDG_RUNTIME_DIR=/tmp"]) {
                     sh '''
                         npm install
                         npx cypress run --config-file ./cypress.config.js --spec cypress/e2e/userExperience.cy.js
