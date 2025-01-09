@@ -1,10 +1,11 @@
 pipeline {
     agent any
     environment {
-        DOCKER_USERNAME = credentials('dockerhub-username') 
-        DOCKER_ACCESS_TOKEN = credentials('dockerhub-token') 
+        // DOCKER_USERNAME = credentials('dockerhub-username') 
+        // DOCKER_ACCESS_TOKEN = credentials('dockerhub-token') 
         GOPROXY = 'http://localhost:8081/repository/go-proxy'
-        NPM_REGISTRY = 'http://localhost:8081/repository/npm-proxy/' // Updated to npm-proxy
+        NPM_REGISTRY = 'http://localhost:8081/repository/npm-proxy/'
+        DOCKER_REGISTRY = 'http://localhost:5001' // Nexus Docker group // Updated to npm-proxy
     }
     stages {
         stage('Checkout Code') {
@@ -55,15 +56,15 @@ pipeline {
 
         stage('Push Docker Images') {
             steps {
-                withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKER_ACCESS_TOKEN')]) {
+                withEnv(["DOCKER_REGISTRY=${DOCKER_REGISTRY}"]) {
                     sh '''
-                        echo "$DOCKER_ACCESS_TOKEN" | docker login -u tankengine --password-stdin
+                        docker login $DOCKER_REGISTRY
+                        
+                        docker tag nextapp:1.0.0 $DOCKER_REGISTRY/nextapp:1.0.0
+                        docker push $DOCKER_REGISTRY/nextapp:1.0.0
 
-                        docker tag nextapp:1.0.0 tankengine/nextapp:1.0.0
-                        docker push tankengine/nextapp:1.0.0
-
-                        docker tag goapp:1.0.0 tankengine/goapp:1.0.0
-                        docker push tankengine/goapp:1.0.0
+                        docker tag goapp:1.0.0 $DOCKER_REGISTRY/goapp:1.0.0
+                        docker push $DOCKER_REGISTRY/goapp:1.0.0
                     '''
                 }
             }
