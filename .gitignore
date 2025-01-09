@@ -1,3 +1,6 @@
 *node_modules
 *env
 *.dockerhub.env
+# Ignore Cypress example folders
+*/cypress/e2e/1-getting-started
+*/cypress/e2e/2-advanced-examples

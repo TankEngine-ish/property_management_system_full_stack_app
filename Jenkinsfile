@@ -5,7 +5,7 @@ pipeline {
         // DOCKER_ACCESS_TOKEN = credentials('dockerhub-token') 
         GOPROXY = 'http://localhost:8081/repository/go-proxy'
         NPM_REGISTRY = 'http://localhost:8081/repository/npm-proxy/'
-        DOCKER_HOSTED = 'localhost:5002' // Hosted repository for private images// Nexus Docker group // Updated to npm-proxy
+        DOCKER_HOSTED = 'localhost:5002' // Hosted repository for private images, moved away from docker hub.
     }
     stages {
         stage('Checkout Code') {
@@ -53,6 +53,26 @@ pipeline {
                 sh 'docker compose build'
             }
         }
+
+
+    //     stage('Push Docker Images') {
+    //         steps {
+    //             withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKER_ACCESS_TOKEN')]) {
+    //                 sh '''
+    //                     echo "$DOCKER_ACCESS_TOKEN" | docker login -u tankengine --password-stdin
+
+    //                     docker tag nextapp:1.0.0 tankengine/nextapp:1.0.0
+    //                     docker push tankengine/nextapp:1.0.0
+
+    //                     docker tag goapp:1.0.0 tankengine/goapp:1.0.0
+    //                     docker push tankengine/goapp:1.0.0
+    //                 '''
+    //             }
+    //         }
+    //     }
+    // }
+
+    // The above code is for pushing to docker hub, but I am using nexus as my docker registry, so I changed the code to push to nexus hosted repo - code below: //
 
         stage('Push Docker Images') {
             steps {

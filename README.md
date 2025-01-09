@@ -94,3 +94,9 @@ I forwarded requests on port 80 and port 443 from my public IP to port 80 and 44
 Nexus:
 
 I had to create an npmrc file which is a configuration file used by the npm(Node Package Manager) command-line tool. It allows you to customize various settings related to how npm behaves while managing packages and dependencies for your Node.
+
+The commands below fixed the issue of not uploading my npm dependencies to Nexus: 
+
+npm cache clean --force
+rm -rf node_modules
+npm install
