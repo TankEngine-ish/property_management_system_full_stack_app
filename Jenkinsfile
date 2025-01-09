@@ -56,9 +56,9 @@ pipeline {
 
         stage('Push Docker Images') {
             steps {
-                withEnv(["DOCKER_REGISTRY=${DOCKER_REGISTRY}"]) {
+                withCredentials([usernamePassword(credentialsId: 'nexus-docker-credentials', usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
                     sh '''
-                        docker login $DOCKER_REGISTRY
+                        echo "$NEXUS_PASSWORD" | docker login $DOCKER_REGISTRY -u $NEXUS_USERNAME --password-stdin
                         
                         docker tag nextapp:1.0.0 $DOCKER_REGISTRY/nextapp:1.0.0
                         docker push $DOCKER_REGISTRY/nextapp:1.0.0
@@ -70,6 +70,7 @@ pipeline {
             }
         }
     }
+    
     post {
         always {
             echo 'Pipeline completed!'
