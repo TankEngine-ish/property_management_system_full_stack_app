@@ -100,3 +100,6 @@ The commands below fixed the issue of not uploading my npm dependencies to Nexus
 npm cache clean --force
 rm -rf node_modules
 npm install
+
+
+I managed to reduce the build time from more than 2 minutes to a whopping 17 seconds!!!
