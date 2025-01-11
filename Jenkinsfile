@@ -95,7 +95,7 @@ pipeline {
                 withSonarQubeEnv('SonarQube') { // 'SonarQube' is the name set in Jenkins > Configure System
                     withCredentials([string(credentialsId: 'sonarqube-auth-token', variable: 'SONAR_TOKEN')]) { // mapped this variable to the token's id in Jenkins
                         sh '''
-                            sonar-scanner \
+                            /home/nito94/Downloads/sonar-scanner-6.2.1.4610-linux-x64/bin/sonar-scanner \
                                 -Dsonar.projectKey=property_management_system \
                                 -Dsonar.sources=backend,frontend \
                                 -Dsonar.host.url=http://localhost:9000 \
