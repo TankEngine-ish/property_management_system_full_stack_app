@@ -89,6 +89,22 @@ pipeline {
                 }
             }
         }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') { // 'SonarQube' is the name set in Jenkins > Configure System
+                    withCredentials([string(credentialsId: 'sonarqube-auth-token', variable: 'SONAR_TOKEN')]) { // mapped to the token's id in Jenkins
+                        sh '''
+                            sonar-scanner \
+                                -Dsonar.projectKey=property_management_system \
+                                -Dsonar.sources=backend,frontend \
+                                -Dsonar.host.url=http://localhost:9000 \
+                                -Dsonar.login=$SONAR_TOKEN
+                        '''
+                    }
+                }
+            }
+        }
     }
 
     post {
