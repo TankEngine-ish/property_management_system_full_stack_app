@@ -92,7 +92,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') { // 'SonarQube' is the name set in Jenkins > Configure System
+                withSonarQubeEnv('SonarQube') { 
                     withCredentials([string(credentialsId: 'sonarqube-auth-token', variable: 'SONAR_TOKEN')]) { // mapped this variable to the token's id in Jenkins
                         sh '''
                             /home/nito94/Downloads/sonar-scanner-6.2.1.4610-linux-x64/bin/sonar-scanner \
