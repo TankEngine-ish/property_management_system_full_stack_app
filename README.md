@@ -108,3 +108,6 @@ Sonarqube:
 
 It requires postgres so I integrated its docker image with my already existing postgres image.
 Because I don't use maven or gradle I am using sonarscanner.
+
+thing I learned - always restart the container after setting up in order to see if it really persist data.
+SO I did a separate postgres database to store the logs of sonarqube there.
