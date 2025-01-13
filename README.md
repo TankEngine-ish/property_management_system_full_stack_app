@@ -33,7 +33,7 @@ Alternatively, if you don't want to toy around with docker images and stuff here
 
 ![alt text](assets/Untitled-ezgif.com-optimize.gif)
 
-And also a VIDEO of me explaining my process:
+
 
 
 
