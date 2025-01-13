@@ -24,7 +24,7 @@ After that you can start the services with `docker-compose up` and go to `http:/
 
 ![alt text](assets/312321321.png)
 
-The above screenshot is a random address with random people added.
+The above screenshot is a random address with random people.
 
 # Brief Demo
 
