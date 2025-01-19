@@ -5,7 +5,7 @@ pipeline {
         // DOCKER_ACCESS_TOKEN = credentials('dockerhub-token') 
         GOPROXY = 'http://localhost:8081/repository/go-proxy'
         NPM_REGISTRY = 'http://localhost:8081/repository/npm-proxy/'
-        DOCKER_HOSTED = 'localhost:5002' // Hosted repository for private images, moved away from docker hub.
+        DOCKER_HOSTED = 'localhost:5002' // Hosted repository for private images, moved away from docker hub
     }
     stages {
         stage('Checkout Code') {
