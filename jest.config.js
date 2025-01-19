@@ -2,7 +2,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(ts|tsx|js|jsx)$': ['babel-jest', { configFile: './babel.jest.config.js' }],
+    '^.+\\.(ts|tsx|js|jsx)$': 'babel-jest',
   },
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
@@ -11,10 +11,6 @@ module.exports = {
   testPathIgnorePatterns: ['/node_modules/', '/dist/', '/.next/'],
   transformIgnorePatterns: ['node_modules/(?!@babel/runtime)'],
 };
-
-
-
-
 
 
 
