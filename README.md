@@ -24,7 +24,7 @@ After that you can start the services with `docker-compose up` and go to `http:/
 
 ![alt text](assets/312321321.png)
 
-The above screenshot is a random address with random people added.
+The above screenshot is a random address with random people.
 
 # Brief Demo
 
@@ -33,7 +33,7 @@ Alternatively, if you don't want to toy around with docker images and stuff here
 
 ![alt text](assets/Untitled-ezgif.com-optimize.gif)
 
-And also a VIDEO of me explaining my process:
+
 
 
 
@@ -111,3 +111,5 @@ Because I don't use maven or gradle I am using sonarscanner.
 
 thing I learned - always restart the container after setting up in order to see if it really persist data.
 SO I did a separate postgres database to store the logs of sonarqube there.
+
+I moved to another linux machine...
