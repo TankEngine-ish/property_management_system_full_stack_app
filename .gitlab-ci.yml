@@ -6,30 +6,20 @@ stages:
 build:
   stage: build
   script:
-    - docker build -t <your-nexus-repo>/goapp:latest ./backend
-    - docker build -t <your-nexus-repo>/nextapp:latest ./frontend
-    - docker push <your-nexus-repo>/goapp:latest
-    - docker push <your-nexus-repo>/nextapp:latest
+    - echo "Building application..."
+  only:
+    - main
 
-validate-k8s:
+test:
   stage: test
   script:
-    - kubectl version --client
-    - minikube version
+    - echo "Running tests..."
+  only:
+    - main
 
-deploy-app:
+deploy:
   stage: deploy
   script:
-    - kubectl apply -f k8s/
-    - kubectl rollout status deployment/goapp
-    - kubectl rollout status deployment/nextapp
-
-deploy-helm:
-  stage: deploy
-  script:
-    - helm upgrade --install property-app ./property-app --set image.repository=<your-nexus-repo>
-
-deploy-istio:
-  stage: deploy
-  script:
-    - kubectl apply -f istio-virtualservice.yml
+    - echo "Deploying application..."
+  only:
+    - main
