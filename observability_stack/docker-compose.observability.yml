@@ -38,8 +38,6 @@ services:
     ports:
       - "3100:3100"
     command: [ '-config.file=/etc/loki/local-config.yaml' ]
-    # The default config "local-config.yaml" is baked into the Loki image
-    # For advanced usage, mount a custom config file.
     restart: unless-stopped
 
   ############################################
