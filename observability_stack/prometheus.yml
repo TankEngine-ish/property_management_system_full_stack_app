@@ -1,0 +1,27 @@
+global:
+  scrape_interval: 5s  # can be done inside grafana UI as well
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["prometheus:9090"]
+
+  - job_name: "cadvisor"
+    static_configs:
+      - targets: ["cadvisor:8080"]  # port is 8080 because it's on the same docker network as prometheus
+
+  - job_name: "goapp"
+    static_configs:
+      - targets: ["goapp:8000"]  # updated to match exposed port
+
+  # - job_name: "nextapp"
+  #   static_configs:
+  #     - targets: ["nextapp:3000"]  # Next.js doesn't expose Prometheus metrics natively
+
+  # - job_name: "postgres"
+  #   static_configs:
+  #     - targets: ["db:5432"]  # must add `postgres_exporter`
+
+  # - job_name: "sonarqube"
+  #   static_configs:
+  #     - targets: ["sonarqube:9000"]  # must add some opensource metrics exporter like vgaidarji/sonarqube_exporter
