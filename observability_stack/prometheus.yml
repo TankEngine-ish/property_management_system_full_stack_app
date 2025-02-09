@@ -1,5 +1,5 @@
 global:
-  scrape_interval: 5s  # Adjust as needed
+  scrape_interval: 5s  # can be done inside grafana UI as well
 
 scrape_configs:
   - job_name: "prometheus"
@@ -12,11 +12,11 @@ scrape_configs:
 
   - job_name: "goapp"
     static_configs:
-      - targets: ["goapp:8000"]  # Updated to match exposed port
+      - targets: ["goapp:8000"]  # updated to match exposed port
 
   # - job_name: "nextapp"
   #   static_configs:
-  #     - targets: ["nextapp:3000"]  # Next.js doesn't expose Prometheus metrics natively, consider an exporter
+  #     - targets: ["nextapp:3000"]  # Next.js doesn't expose Prometheus metrics natively
 
   # - job_name: "postgres"
   #   static_configs:
