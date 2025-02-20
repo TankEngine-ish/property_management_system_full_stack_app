@@ -3,7 +3,7 @@ version: '3.8'
 services:
   nextapp:
     container_name: nextapp
-    image: nextapp:1.0.1
+    image: nextapp:1.0.2
     build:
       context: ./frontend
       dockerfile: next.dockerfile
@@ -33,7 +33,7 @@ services:
 
   goapp:
     container_name: goapp
-    image: goapp:1.0.1
+    image: goapp:1.0.2
     build:
       context: ./backend
       dockerfile: go.dockerfile
