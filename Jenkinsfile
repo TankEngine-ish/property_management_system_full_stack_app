@@ -80,11 +80,11 @@ pipeline {
                     sh '''
                         echo "$NEXUS_PASSWORD" | docker login $DOCKER_HOSTED -u $NEXUS_USERNAME --password-stdin
                         
-                        docker tag nextapp:1.0.0 $DOCKER_HOSTED/nextapp:1.0.0
-                        docker push $DOCKER_HOSTED/nextapp:1.0.0
+                        docker tag nextapp:1.0.2 $DOCKER_HOSTED/nextapp:1.0.2
+                        docker push $DOCKER_HOSTED/nextapp:1.0.2
 
-                        docker tag goapp:1.0.0 $DOCKER_HOSTED/goapp:1.0.0
-                        docker push $DOCKER_HOSTED/goapp:1.0.0
+                        docker tag goapp:1.0.2 $DOCKER_HOSTED/goapp:1.0.2
+                        docker push $DOCKER_HOSTED/goapp:1.0.2
                     '''
                 }
             }

@@ -113,3 +113,11 @@ thing I learned - always restart the container after setting up in order to see 
 SO I did a separate postgres database to store the logs of sonarqube there.
 
 I moved to another linux machine...
+
+
+
+Infra and k8s stuff: 
+
+1. I had to make an S3 bucket for the Terraform state. I'm utilizing Terraform's best practices by using Remote State.
+2. But before all that I created a user from the IAM so I won't be using my AWS root user. Then I created the EC2 instance via my TF configuration.
+3. I created a separate providers.tf file and terraform.tf file following best practices.
