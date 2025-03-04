@@ -8,12 +8,12 @@ describe("User API and Frontend Integration E2E Test", () => {
       name: "Geralt of Rivia",
       statement: 300,
     }).then((response) => {
-      expect(response.status).to.eq(200); // creates the test user
+      expect(response.status).to.eq(200); // creates Geralt
       const userId = response.body.id;
 
      
       cy.request("GET", `${apiBaseUrl}/api/repair/users/${userId}`).then((fetchResponse) => {
-        expect(fetchResponse.status).to.eq(200); // fetches the test user
+        expect(fetchResponse.status).to.eq(200); // fetches Geralt
         expect(fetchResponse.body).to.have.property("name", "Geralt of Rivia");
         expect(fetchResponse.body).to.have.property("statement", 300);
       });
@@ -26,7 +26,7 @@ describe("User API and Frontend Integration E2E Test", () => {
 
       
       cy.request("DELETE", `${apiBaseUrl}/api/repair/users/${userId}`).then((deleteResponse) => {
-        expect(deleteResponse.status).to.eq(200); //deletes the test user
+        expect(deleteResponse.status).to.eq(200); //deletes Geralt
 
         
         cy.request({
@@ -34,10 +34,10 @@ describe("User API and Frontend Integration E2E Test", () => {
           url: `${apiBaseUrl}/api/repair/users/${userId}`,
           failOnStatusCode: false, 
         }).then((verifyResponse) => {
-          expect(verifyResponse.status).to.eq(404); // making sure the test user is gone
+          expect(verifyResponse.status).to.eq(404); // making sure Geralt is gone
         });
 
-        // Step 6: Refresh the frontend and validate user is no longer displayed
+        // finally we refresh the frontend and validate Geralt is no longer displayed
         cy.visit(frontendUrl);
         cy.contains(`Id: ${userId}`).should("not.exist");
         cy.contains("Geralt of Rivia").should("not.exist");
