@@ -63,7 +63,7 @@ pipeline {
                         docker tag nextapp:1.0.2 tankengine/nextapp:1.0.2
                         docker push tankengine/nextapp:1.0.2
 
-                        docker tag goapp:1.0.2 tankengine/goapp:1.0.2
+                        docker tag goapp:1.0.3 tankengine/goapp:1.0.3
                         docker push tankengine/goapp:1.0.3
                     '''
                 }
