@@ -33,7 +33,7 @@ services:
 
   goapp:
     container_name: goapp
-    image: goapp:1.0.2
+    image: goapp:1.0.3
     build:
       context: ./backend
       dockerfile: go.dockerfile
