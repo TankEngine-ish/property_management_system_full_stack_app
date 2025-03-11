@@ -3,7 +3,7 @@ version: '3.8'
 services:
   nextapp:
     container_name: nextapp
-    image: nextapp:1.0.2
+    image: nextapp:1.0.6
     build:
       context: ./frontend
       dockerfile: next.dockerfile
