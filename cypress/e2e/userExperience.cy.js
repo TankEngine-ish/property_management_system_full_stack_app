@@ -84,6 +84,8 @@ describe("User API and Frontend Integration E2E Test", () => {
         
         cy.wait(3000);
         cy.contains(`${updateUserName}-updated`).should('be.visible');
+        
+        // Clean up, again
         cy.contains(`${updateUserName}-updated`)
           .parents('div.flex.items-center.justify-between')
           .find('button')
