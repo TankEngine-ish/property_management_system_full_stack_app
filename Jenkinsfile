@@ -60,11 +60,11 @@ pipeline {
                     sh '''
                         echo "$DOCKER_ACCESS_TOKEN" | docker login -u tankengine --password-stdin
 
-                        docker tag nextapp:1.0.2 tankengine/nextapp:1.0.2
-                        docker push tankengine/nextapp:1.0.2
+                        docker tag nextapp:1.0.6 tankengine/nextapp:1.0.6
+                        docker push tankengine/nextapp:1.0.6
 
-                        docker tag goapp:1.0.3 tankengine/goapp:1.0.3
-                        docker push tankengine/goapp:1.0.3
+                        docker tag goapp:1.0.4 tankengine/goapp:1.0.4
+                        docker push tankengine/goapp:1.0.4
                     '''
                 }
             }
