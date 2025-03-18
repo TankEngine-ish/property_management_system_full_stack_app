@@ -108,7 +108,12 @@ pipeline {
                         git clone https://github.com/${INFRA_REPO}.git
                         cd property_management_system_infrastructure
                         
-                        # Create a new branch for the PR
+                        # Make sure we have the latest prod branch before creating a new branch
+                        git fetch origin prod:prod
+                        git checkout prod
+                        git pull origin prod
+                        
+                        # Create a new branch for the PR from the latest prod
                         git checkout -b ${env.PR_BRANCH_NAME}
                     """
                     
