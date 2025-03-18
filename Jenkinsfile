@@ -129,6 +129,21 @@ pipeline {
                         filesToAdd.add("property-app-charts/charts/backend/Chart.yaml")
                         updateMessage += "\\n- Backend: ${params.BACKEND_VERSION}"
                     }
+
+                    if (params.UPDATE_FRONTEND) {
+                        sh """
+                            cd property_management_system_infrastructure
+                            
+                            # Update frontend version in values.yaml
+                            sed -i "s/tag: \\"[0-9]\\.[0-9]\\.[0-9]*\\"/tag: \\"${params.FRONTEND_VERSION}\\"/g" property-app-charts/charts/frontend/values.yaml
+                            
+                            # Update frontend version in Chart.yaml
+                            sed -i "s/appVersion: \\"[0-9]\\.[0-9]\\.[0-9]*\\"/appVersion: \\"${params.FRONTEND_VERSION}\\"/g" property-app-charts/charts/frontend/Chart.yaml
+                        """
+                        filesToAdd.add("property-app-charts/charts/frontend/values.yaml")
+                        filesToAdd.add("property-app-charts/charts/frontend/Chart.yaml")
+                        updateMessage += "\\n- Frontend: ${params.FRONTEND_VERSION}"
+                    }
                     
                     def filesToAddString = filesToAdd.join(" ")
                     def prTitle = getPrTitle()
