@@ -35,7 +35,7 @@ Alternatively, if you don't want to toy around with docker images and stuff here
 
 
 
-
+![alt text](assets/application_diagram.png)
 
 Problems I fixed:
 
