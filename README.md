@@ -1,41 +1,124 @@
-# Overview 
-This is my second full-stack application. This time with completely different technologies.
-I used Go, Typescript with Next.js, little bit of tailwind, PostgreSQL and my favorite Docker Compose.
+# Project Overview 
+This is my now second full-stack application. I used Go, Typescript with Next.js, little bit of tailwind, PostgreSQL and my favorite Docker Compose.
 
 The reason why I did this is because our property manager needed assistance collecting fees for building repairs
 and I've decided to use the opportunity to create a coding project to keep track of who's paying.
 
-It's far from production ready but I just had to get something up and running as fast as I can. I'll improve on it in the future.
-The code that's on github uses the default postgres password but I'm running it on my machine with .env variables.
+The application follows a three-tier architecture pattern (some would say it's even implementing a microservice approach but I wouldn't agree) with these key components:
 
-All three main services are on separate containers and also pushed to docker hub.
+* Backend Service in Go: RESTful API for data operations
+* Frontend Service (Next.js): User interface with React components
+* Database (PostgreSQL): Persistent data storage
+* CI/CD Pipeline (Jenkins): Automated testing and deployment
+* Observability Stack: Monitoring and logging
 
-![alt text](assets/volume.png)
-
-# Usage
-
-You can clone this repository and then `pull` the docker images from docker hub:
-
-`docker pull tankengine/nextapp:1.0.0`
-`docker pull tankengine/goapp:1.0.0`
-`docker pull tankengine/postgres:15`
-
-After that you can start the services with `docker-compose up` and go to `http://localhost:3000`.
-
-![alt text](assets/312321321.png)
-
-The above screenshot is a random address with random people.
-
-# Brief Demo
-
-Alternatively, if you don't want to toy around with docker images and stuff here's a short .gif demonstration.
+For the backend I tried to use modular structure as much as possible.
+I have defined plenty of constants to avoid hardcoding values, which is a good practice for maintainability. I gotta mention this even though it would come later in my documentation that some of the code edits I did were a result of *Sonarqube*:
 
 
-![alt text](assets/Untitled-ezgif.com-optimize.gif)
+![alt text](assets/sonarqube_test2.png)
 
+Above is a sample screenshot of some of the advice their platform gave me after I implemented its functionality in my Jenkins pipeline. It's pretty neat if you get tired of your preferred AI agent's suggestions. So what I've changed because of Sonar is I constructed HTTP Header Constants, Error Message Constants and a MIME (Multipurpose Internet Mail Extension) Type Constant.
+
+
+### The main function flow:
+
+* Environment loading with godotenv
+* Database connection and setup
+* Router configuration
+* API endpoint registration
+* CORS middleware implementation
+* Server startup
+
+
+### API Endpoints:
+
+* /health: Health check endpoint (The main reason I wanted to add this is because I wanted the backend to be as much Kubernetes-ready as possible)
+* /api/repair/users: GET (all users) and POST (create user)
+* /api/repair/users/{id}: GET, PUT, DELETE operations for specific users. Far from perfect but will come back and make it more modular after some time.
+
+
+### Middleware:
+
+* CORS enablement
+* JSON content type setting
+
+It's all far from production ready but I wanted to really focus on the infrastructure components later in another repository.
+
+# The Continuos Integration Map of my Application
+
+Below is a Figma diagram I made to illustrate all the bits and pieces that came into play on the surface level. 
 
 
 ![alt text](assets/application_diagram.png)
+
+
+# It All Started With Jenkins
+
+As I was building my initial version of the pipeline I wanted to implement a secondary branch where the hypothetical dev, ops and QA teams can build and test new features and debug. I also wanted to create for them a nice pipeline to do so. Well, but because GitHub can only send webhook payloads to a publicly accessible URL, like I needed to set-up:
+
+* A fixed local IP via DHCP reservation, so my router always knew where Jenkins lived.
+* Port forwarding from your router (ports 80 and 443) to your Jenkins machine.
+* DuckDNS domain to point to my home’s dynamic public IP.
+* Nginx reverse proxy to serve Jenkins at that domain with SSL.
+* Let's Encrypt / Certbot to generate valid HTTPS certs (GitHub requires HTTPS for webhooks).
+
+
+### My goal was to create a smooth workflow like:
+
+- Devs push code to GitHub.
+- GitHub sends a webhook to Jenkins.
+- Jenkins triggers my CI/CD pipeline (test, build, push Docker images, etc.).
+- I get feedback in Jenkins and/or GitHub status checks.
+
+My very last version of my Jenkins pipeline looked like this: 
+
+![alt text](<assets/Screenshot from 2025-03-18 19-58-26.png>)
+
+- I have implemeneted parameters and environment variables to make the pipeline flexible and reduce hardcoded values.
+
+- I leveraged Jenkins credentials binding for secure access to sensitive data (Docker tokens, GitHub API tokens) to adhere to security best practices.
+
+- I managed to Running unit tests concurrently for both frontend and backend to minimize build time and improve efficiency. I had some issues with setting up the Cypress E2E test in headless mode as Jenkins runs are obviously a non GUI environment but I am so proud that I managed to crack it!
+Below is a screenshot of a local cypress run test I did in the beginning:
+
+![alt text](<assets/Screenshot from 2025-02-13 17-45-42.png>)
+
+- The dynamic tagging of Docker images using parameterized version numbers ensures consistent and reproducible builds.This is me adding parameters for the builds if one day I decide to scrap the automatic run on push to feature approach:
+
+![alt text](<assets/Screenshot from 2025-03-18 19-48-19.png>)
+
+- What my pipeline also does is it manages infrastructure changes it automates PR creation by creating a pull request to update the infrastructure repository. This way I ensure that changes are reviewed and merged through a controlled process.
+
+- Dynamic Branch and PR Naming: Functions that generate branch names and PR titles based on updated components improve clarity and traceability.
+
+- And finally I have the integrated code quality checks:
+
+- At the end I ensure that the workspace is cleaned up after each build and provides clear feedback on the build status.
+
+- I really also wanted to mention that I have also integrated my pipeline with a *Sonatype Nexus Repository*
+
+![alt text](<assets/Screenshot from 2025-03-08 12-22-12.png>) 
+
+
+![alt text](<assets/Screenshot from 2025-03-08 12-21-32.png>)
+
+
+It is really worth mentioning that my build time got reduced by about 20-25 seconds for such a small application like mine compared to pushing to docker hub. Imagine that on scale? But because I later implemented ArgoCD it was far easier for me to switch to dockerHub because I think I had to set-up Image Updater but I am not quite sure yet how or if I even needed to do that. Anyway, it's very much worth sharing that with you.
+
+
+
+
+
+# Brief Demo
+
+
+
+
+
+
+
+
 
 Problems I fixed:
 
