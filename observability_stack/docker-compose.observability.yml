@@ -1,9 +1,6 @@
 version: '3.8'
 
 services:
-  ############################################
-  # cAdvisor - Collect Docker container metrics
-  ############################################
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
@@ -15,10 +12,6 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
     restart: unless-stopped
-
-  ############################################
-  # Prometheus - Scrape metrics (cAdvisor, itself)
-  ############################################
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -28,10 +21,6 @@ services:
     ports:
       - "9090:9090"
     restart: unless-stopped
-
-  ############################################
-  # Loki - Store and query logs
-  ############################################
   loki:
     image: grafana/loki:2.8.2
     container_name: loki
@@ -39,10 +28,6 @@ services:
       - "3100:3100"
     command: [ '-config.file=/etc/loki/local-config.yaml' ]
     restart: unless-stopped
-
-  ############################################
-  # Promtail - Collect Docker logs & push to Loki
-  ############################################
   promtail:
     image: grafana/promtail:2.8.2
     container_name: promtail
@@ -52,10 +37,6 @@ services:
     command: 
       - "--config.file=/etc/promtail/promtail-config.yml"
     restart: unless-stopped
-
-  ############################################
-  # Grafana - Visualization for metrics & logs
-  ############################################
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
