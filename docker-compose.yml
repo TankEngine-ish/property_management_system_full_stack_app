@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.8' # yes, I know that "version:"" is optional for Docker Compose v2 and newer now and I don't need it but I like to be explicit
 
 services:
   nextapp:
