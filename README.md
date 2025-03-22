@@ -67,8 +67,6 @@ As I was building my initial version of the pipeline I wanted to implement a sec
 
 ![alt text](<assets/Screenshot from 2025-03-21 21-44-40.png>)
 
-120 Builds is an old number by the way.
-
 ### My goal was to create a smooth workflow like:
 
 - Devs push code to GitHub.
@@ -80,9 +78,13 @@ My very last version of my Jenkins pipeline looked like this:
 
 ![alt text](<assets/Screenshot from 2025-03-18 19-58-26.png>)
 
+120 Builds is an old number by the way.
+
 - I have implemeneted parameters and environment variables to make the pipeline flexible and reduce hardcoded values.
 
 - I leveraged Jenkins credentials binding for secure access to sensitive data (Docker tokens, GitHub API tokens) to adhere to security best practices.
+
+- I fixed an issue where babel was interfering with the nextjs engine when building the dockerfile so I had to tinker with the babelrc config file and ultimately resolved the problem.
 
 - I managed to set-up and run unit tests concurrently for both frontend and backend to minimize build time and improve efficiency. I had some issues with setting up the Cypress E2E test in headless mode as Jenkins runs are obviously a non GUI environment but I am so proud that I managed to crack it by installing the xvfb dependency which is an in-memory display server for a UNIX-like operating system.
 Below is a screenshot of a local cypress run test I did in the beginning:
@@ -129,9 +131,19 @@ My initial plan for the Load and Performance Testing was to set-up a complex JMe
 
 ![alt text](<assets/Screenshot from 2025-01-24 21-35-37.png>) 
 
+This is what a successful test looks like. There were 500 total requests. 250 for the "home page" and 250 for the 404 Page. I configured the assertion for to treat 404 as a successful response. The Average Response Time (ms) is:
+
+- Home Page: 1.60
+
+- Page Returning 404: 1.04
+
+- Max Response Time: 27 ms
+
+- Throughput: ~49.3 transactions/sec overall
+
 ![alt text](<assets/Screenshot from 2025-01-24 21-03-45.png>)
 
-
+Now, in the screenshot above I don't treat the /test path (404 Page) as a success so I get an APDEX Score of 0.000. The slightly higher throughput: ~80 TPS is maybe due to the shorter error-handling time.
 
 
 # My Observability Set-Up
@@ -150,96 +162,10 @@ My initial plan for the Load and Performance Testing was to set-up a complex JMe
 
 
 
+# Final Thoughts
 
-
-
-
-
-
-Problems I fixed:
-
-I mounted the .env file in the docker compose file. 
-Then i removed the cached postgres db and restarted the docker images.
-Now it was able to reconnect.
-
-
-Also pushing to docker hub with re-tagging an image.
-Useful commands "docker images" and "docker tag d4332ddfd789 tankengine/goapp:latest" and then push with "docker push tankengine/goapp:latest"
-
-
-Jenkins part:
-
-I've decided to use a local installation of Jenkins instead of having it as container and mindlessly fiddling with docker groups, Docker-IN-Docker images, sockets
-and user permissions.
-I added the jenkins user to the docker group: sudo usermod -aG docker jenkins and did a test script:
-
-Started by user jenkins
-[Pipeline] Start of Pipeline
-[Pipeline] node
-Running on Jenkins in /var/lib/jenkins/workspace/docker test
-[Pipeline] {
-[Pipeline] stage
-[Pipeline] { (Docker Test)
-[Pipeline] script
-[Pipeline] {
-[Pipeline] sh
-+ docker ps
-CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
-[Pipeline] }
-[Pipeline] // script
-[Pipeline] }
-[Pipeline] // stage
-[Pipeline] }
-[Pipeline] // node
-[Pipeline] End of Pipeline
-Finished: SUCCESS
-
-
-- Fixed an issue where babel was interfering with the nextjs engine when building the docker compose so I had to tinker with the babelrc config file.
+I am definitely missing a lot of things during the development of this project as I think it covered plenty of areas in the SDLC. All in all, it was a very steep learning curve, one that many people would've given up on, but it was definitely worth it in order to understand why being 
+Speaking of DevOps this project was just the beginning.
 
 
  
-Now the jest test works and the compose works as well.
-
-did the jest db, frontend and backend tests. Did the E2E test.
-
-Created credentials for the dockerhub account inside Jenkins.
-
-Set up Cypress in the headless environment in Jenkins.rm -rf cypress.
-Installed the xvfb dependency. Config the file for no support file.
-
-I did a DHCP reservation for a local static IP so I can host my jenkins on an nginx server
-in order to expose it to GItHub's webhook so I can build on push to the repo.
-
-I forwarded requests on port 80 and port 443 from my public IP to port 80 and 443 on my local Ubuntu server.
-
-Nexus:
-
-I had to create an npmrc file which is a configuration file used by the npm(Node Package Manager) command-line tool. It allows you to customize various settings related to how npm behaves while managing packages and dependencies for your Node.
-
-The commands below fixed the issue of not uploading my npm dependencies to Nexus: 
-
-npm cache clean --force
-rm -rf node_modules
-npm install
-
-
-I managed to reduce the build time from more than 2 minutes to a whopping 17 seconds!!!
-
-Sonarqube: 
-
-It requires postgres so I integrated its docker image with my already existing postgres image.
-Because I don't use maven or gradle I am using sonarscanner.
-
-thing I learned - always restart the container after setting up in order to see if it really persist data.
-SO I did a separate postgres database to store the logs of sonarqube there.
-
-I moved to another linux machine...
-
-
-
-Infra and k8s stuff: 
-
-1. I had to make an S3 bucket for the Terraform state. I'm utilizing Terraform's best practices by using Remote State.
-2. But before all that I created a user from the IAM so I won't be using my AWS root user. Then I created the EC2 instance via my TF configuration.
-3. I created a separate providers.tf file and terraform.tf file following best practices.
