@@ -1,5 +1,5 @@
 # Project Overview 
-This is my now second full-stack application. I used Go, Typescript with Next.js, little bit of tailwind, PostgreSQL and my favorite Docker Compose.
+This is now my second full-stack application. But with a twist.
 
 The reason why I did this is because our property manager needed assistance collecting fees for building repairs
 and I've decided to use the opportunity to create a coding project to keep track of who's paying.
@@ -63,10 +63,6 @@ As I was building my initial version of the pipeline I wanted to implement a sec
 * Nginx reverse proxy to serve Jenkins at that domain with SSL.
 * Let's Encrypt / Certbot to generate valid HTTPS certs (GitHub requires HTTPS for webhooks).
 
-The end result? There you have it: 
-
-![alt text](<assets/Screenshot from 2025-03-21 21-44-40.png>)
-
 ### Final result: 
 
 ![alt text](<assets/Screenshot from 2025-03-21 21-44-40.png>)
@@ -88,7 +84,7 @@ My very last version of my Jenkins pipeline looked like this:
 
 - I leveraged Jenkins credentials binding for secure access to sensitive data (Docker tokens, GitHub API tokens) to adhere to security best practices.
 
-- I managed to set-up and run unit tests concurrently for both frontend and backend to minimize build time and improve efficiency. I had some issues with setting up the Cypress E2E test in headless mode as Jenkins runs are obviously a non GUI environment but I am so proud that I managed to crack it!
+- I managed to set-up and run unit tests concurrently for both frontend and backend to minimize build time and improve efficiency. I had some issues with setting up the Cypress E2E test in headless mode as Jenkins runs are obviously a non GUI environment but I am so proud that I managed to crack it by installing the xvfb dependency which is an in-memory display server for a UNIX-like operating system.
 Below is a screenshot of a local cypress run test I did in the beginning:
 
 ![alt text](<assets/Screenshot from 2025-02-13 17-45-42.png>)
@@ -99,9 +95,11 @@ Below is a screenshot of a local cypress run test I did in the beginning:
 
 - What my pipeline also does is it helps the hypothetical DevOps/Cloud team with infrastructure changes by automatating PR creation by creating a pull request to update the infrastructure repository with new and tested application code. This way I ensure that changes are manually reviewed and merged through a controlled process.
 
+- Okay but why do I need PostgreSQL for SonarQube? Well, it's mainly for persistence and performance. Also, it requires a database in order to store the code analysis results, the quality metrics history, the user accounts and permissions and the project's configurations. Many people might object that I've configured SonarQube to use the same PostgreSQL instance as my application but in my defense SonarQube creates its own schema within my database and it keeps its tables separate from my application data. Also, it's all done in the dev stage of the SDLC so get off my ass. It has nothing to do with the production database. But anyway I've configured persistent volumes for SonarQube's data and logs and also I made sure that Sonarqube always starts after the db container to prevent errors. 
+
 - Dynamic Branch and PR Naming: Functions that generate branch names and PR titles based on updated components definitely improve clarity and traceability.
 
-- And finally I have the integrated code quality checks:
+- And finally I have the integrated code quality checks by running SonarQube as a Docker container, installing sonar-scanner locally and adding sonar-project.properties to my repo and wiring it into Jenkins pipeline.
 
 - At the end I ensure that the workspace is cleaned up after each build and provides clear feedback on the build status.
 
@@ -114,6 +112,35 @@ Below is a screenshot of a local cypress run test I did in the beginning:
 
 
 It is really worth mentioning that my build time got reduced by about 20-25 seconds for such a small application like mine, compared to pushing to docker hub. Imagine that on scale? But because I later implemented ArgoCD it was far easier for me to switch to dockerHub because I think I had to set-up Image Updater but I am not quite sure yet how or if I even needed to do that. Anyway, it's very much worth sharing that with you.
+
+
+# Who Is Carrying The Load?
+
+My initial plan for the Load and Performance Testing was to set-up a complex JMeter -> influxDB/Prometheus -> Grafana pipeline but at that point I really wanted to move on and start building the infrastructure. I still did two simple stand-alone load tests.
+
+### Parameters 
+
+- I set it to 400 Number of Threads (Users) with a ramp-Up period of 120 seconds.
+
+- The duration is 300 seconds (5 minutes).
+
+- The path being /api/repair/users with a GET Method. The 404 Page is /test.
+
+
+![alt text](<assets/Screenshot from 2025-01-24 21-35-37.png>) 
+
+![alt text](<assets/Screenshot from 2025-01-24 21-03-45.png>)
+
+
+
+
+# My Observability Set-Up
+
+
+
+
+
+
 
 
 
@@ -168,7 +195,10 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 Finished: SUCCESS
 
 
-fixed an issue where babel was interfering with the nextjs engine when building the docker compose so I had to tinker with the babelrc config file.
+- Fixed an issue where babel was interfering with the nextjs engine when building the docker compose so I had to tinker with the babelrc config file.
+
+
+ 
 Now the jest test works and the compose works as well.
 
 did the jest db, frontend and backend tests. Did the E2E test.
