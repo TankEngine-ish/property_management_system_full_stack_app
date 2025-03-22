@@ -13,7 +13,7 @@ The application follows a three-tier architecture pattern (some would say it's e
 * Observability Stack: Monitoring and logging
 
 For the backend I tried to use modular structure as much as possible.
-I have defined plenty of constants to avoid hardcoding values, which is a good practice for maintainability. I gotta mention this even though it would come later in my documentation that some of the code edits I did were a result of *Sonarqube*:
+I have defined plenty of constants to avoid hardcoding values, which is a good practice for maintainability. I gotta mention this, even though it would come later in my documentation, that some of the code edits I did were as a result of *Sonarqube*'s suggestions:
 
 
 ![alt text](assets/sonarqube_test2.png)
@@ -55,14 +55,23 @@ Below is a Figma diagram I made to illustrate all the bits and pieces that came 
 
 # It All Started With Jenkins
 
-As I was building my initial version of the pipeline I wanted to implement a secondary branch where the hypothetical dev, ops and QA teams can build and test new features and debug. I also wanted to create for them a nice pipeline to do so. Well, but because GitHub can only send webhook payloads to a publicly accessible URL, like I needed to set-up:
+As I was building my initial version of the pipeline I wanted to implement a secondary branch where the hypothetical dev, ops and QA teams can build and test new features and debug. I also wanted to create for them a nice pipeline to do so. Well, because GitHub can only send webhook payloads to a publicly accessible URL I needed to set-up:
 
 * A fixed local IP via DHCP reservation, so my router always knew where Jenkins lived.
-* Port forwarding from your router (ports 80 and 443) to your Jenkins machine.
+* Port forwarding from my router (ports 80 and 443) to my Jenkins machine.
 * DuckDNS domain to point to my home’s dynamic public IP.
 * Nginx reverse proxy to serve Jenkins at that domain with SSL.
 * Let's Encrypt / Certbot to generate valid HTTPS certs (GitHub requires HTTPS for webhooks).
 
+The end result? There you have it: 
+
+![alt text](<assets/Screenshot from 2025-03-21 21-44-40.png>)
+
+### Final result: 
+
+![alt text](<assets/Screenshot from 2025-03-21 21-44-40.png>)
+
+120 Builds is an old number by the way.
 
 ### My goal was to create a smooth workflow like:
 
@@ -79,7 +88,7 @@ My very last version of my Jenkins pipeline looked like this:
 
 - I leveraged Jenkins credentials binding for secure access to sensitive data (Docker tokens, GitHub API tokens) to adhere to security best practices.
 
-- I managed to Running unit tests concurrently for both frontend and backend to minimize build time and improve efficiency. I had some issues with setting up the Cypress E2E test in headless mode as Jenkins runs are obviously a non GUI environment but I am so proud that I managed to crack it!
+- I managed to set-up and run unit tests concurrently for both frontend and backend to minimize build time and improve efficiency. I had some issues with setting up the Cypress E2E test in headless mode as Jenkins runs are obviously a non GUI environment but I am so proud that I managed to crack it!
 Below is a screenshot of a local cypress run test I did in the beginning:
 
 ![alt text](<assets/Screenshot from 2025-02-13 17-45-42.png>)
@@ -88,15 +97,15 @@ Below is a screenshot of a local cypress run test I did in the beginning:
 
 ![alt text](<assets/Screenshot from 2025-03-18 19-48-19.png>)
 
-- What my pipeline also does is it manages infrastructure changes it automates PR creation by creating a pull request to update the infrastructure repository. This way I ensure that changes are reviewed and merged through a controlled process.
+- What my pipeline also does is it helps the hypothetical DevOps/Cloud team with infrastructure changes by automatating PR creation by creating a pull request to update the infrastructure repository with new and tested application code. This way I ensure that changes are manually reviewed and merged through a controlled process.
 
-- Dynamic Branch and PR Naming: Functions that generate branch names and PR titles based on updated components improve clarity and traceability.
+- Dynamic Branch and PR Naming: Functions that generate branch names and PR titles based on updated components definitely improve clarity and traceability.
 
 - And finally I have the integrated code quality checks:
 
 - At the end I ensure that the workspace is cleaned up after each build and provides clear feedback on the build status.
 
-- I really also wanted to mention that I have also integrated my pipeline with a *Sonatype Nexus Repository*
+- I really also wanted to mention that I have integrated into my pipeline a *Sonatype Nexus Repository*
 
 ![alt text](<assets/Screenshot from 2025-03-08 12-22-12.png>) 
 
@@ -104,7 +113,7 @@ Below is a screenshot of a local cypress run test I did in the beginning:
 ![alt text](<assets/Screenshot from 2025-03-08 12-21-32.png>)
 
 
-It is really worth mentioning that my build time got reduced by about 20-25 seconds for such a small application like mine compared to pushing to docker hub. Imagine that on scale? But because I later implemented ArgoCD it was far easier for me to switch to dockerHub because I think I had to set-up Image Updater but I am not quite sure yet how or if I even needed to do that. Anyway, it's very much worth sharing that with you.
+It is really worth mentioning that my build time got reduced by about 20-25 seconds for such a small application like mine, compared to pushing to docker hub. Imagine that on scale? But because I later implemented ArgoCD it was far easier for me to switch to dockerHub because I think I had to set-up Image Updater but I am not quite sure yet how or if I even needed to do that. Anyway, it's very much worth sharing that with you.
 
 
 
