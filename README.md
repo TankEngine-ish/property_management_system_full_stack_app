@@ -148,10 +148,35 @@ Now, in the screenshot above I don't treat the /test path (404 Page) as a succes
 
 # My Observability Set-Up
 
+The last stage of my Continious Integration design was to create a relatively straightforward observability system. The tools I've used are as follows:
+
+- Prometheus to scrape metrics
+- Grafana Dashboards to visualize it all
+- cAdvisor as a container-level system  (CPU, memory, disk, etc.)
+- Loki as a log aggregation backend
+- Promtail to Ship logs from all the Docker containers (including itself) to Loki
+
+I really wanted to implement all three of the *three pillars of observability* pattern:
+
+![alt text](assets/1_8Z1LJMVg1SGaBkvAzDHvpA.png)
+
+At the moment I am missing the distributed tracing piece in my stack. This can be implemented using tools like Jaeger or Zipkin but it could be done further down the line. A rough sketch of the idea looks something like this: 
+
+- I add OpenTelemetry instrumentation to my Go backend
+- Then implement a trace context propagation in my Next.js frontend
+- After that I would deploy Jaeger or Tempo as my tracing backend
+
+Now I'd like to talk about my current observability system and really emphasize on the importance of cAdvisor for getting those fine, granular container metrics which help identify performance bottlenecks and resource constraints. 
+
+![alt text](<Screenshot from 2025-02-02 22-57-34.png>)
 
 
 
 
+
+# Folder Structure
+
+[text](assets/fodler_structure_application.md)
 
 
 
