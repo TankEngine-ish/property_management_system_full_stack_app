@@ -166,7 +166,7 @@ At the moment I am missing the distributed tracing piece in my stack. This can b
 - Then implement a trace context propagation in my Next.js frontend
 - After that I would deploy Jaeger or Tempo as my tracing backend
 
-Now I'd like to talk about my current observability system and really emphasize on the importance of cAdvisor for getting those  granular container metrics which help identify performance bottlenecks and resource constraints. The iamge below is a screengrab from my cAdvisor dashboard which shows both user and kernel CPU usage over time, with several spikes - the most notable being around 10:57:10 UTC+2 where CPU usage peaked at about 0.15 cores.
+Now I'd like to talk about my current observability system and really emphasize on the importance of cAdvisor for getting those  granular container metrics which help identify performance bottlenecks and resource constraints. The image below is a screengrab from my cAdvisor dashboard which shows both user and kernel CPU usage over time, with several spikes - the most notable being around 10:57:10 UTC+2 where CPU usage peaked at about 0.15 cores.
 
 ![alt text](<assets/Screenshot from 2025-02-02 22-57-34.png>)
 
@@ -200,17 +200,28 @@ The Label browser in the image below also shows all my monitored containers:
 
 ![alt text](<assets/Screenshot from 2025-02-05 22-18-53.png>)
 
-/cadvisor
-/db (PostgreSQL)
-/loki
-/nextapp
-/prometheus
-/promtail
-/sonarqube
-
 and the final dashboard: 
 
 ![alt text](<assets/Screenshot from 2025-02-09 21-33-52.png>)
+
+I know what you're thinking - what the hell is going on with your cAdvisor? Okay, I think there could be a simple and fair explanation for that.
+
+cAdvisor is constantly performing several resource-intensive tasks like:
+
+- constant system calls and Docker API interactions.
+- collecting CPU usage statistics, memory usage and limits, filesystem usage is not for free.
+- processing all this raw data into meaningful metrics, involving calculations and aggregations for each container.
+
+Looking at the memory usage section of my dashboard, we can see:
+
+- cAdvisor using about 122-141 MB of memory
+- SonarQube actually using the *most* memory (2.87 GB)
+
+While other services using modest amounts:
+
+- Prometheus: ~548 MB
+- Grafana: ~258 MB
+- PostgreSQL (db): ~73.3 MB
 
 
 # Folder Structure
@@ -220,7 +231,7 @@ and the final dashboard:
 
 
 
-# Brief Demo
+# Brief Demo of the Application
 
 
 
