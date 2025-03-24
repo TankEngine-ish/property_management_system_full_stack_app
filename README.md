@@ -166,12 +166,51 @@ At the moment I am missing the distributed tracing piece in my stack. This can b
 - Then implement a trace context propagation in my Next.js frontend
 - After that I would deploy Jaeger or Tempo as my tracing backend
 
-Now I'd like to talk about my current observability system and really emphasize on the importance of cAdvisor for getting those fine, granular container metrics which help identify performance bottlenecks and resource constraints. 
+Now I'd like to talk about my current observability system and really emphasize on the importance of cAdvisor for getting those  granular container metrics which help identify performance bottlenecks and resource constraints. The iamge below is a screengrab from my cAdvisor dashboard which shows both user and kernel CPU usage over time, with several spikes - the most notable being around 10:57:10 UTC+2 where CPU usage peaked at about 0.15 cores.
 
 ![alt text](<assets/Screenshot from 2025-02-02 22-57-34.png>)
 
+Without cAdvisor I would lose almost all of my container-level metrics collection, resource usage statistics per container and hardware-level metrics like CPU throttling events. One thing that is independent from cAdvisor is my Go backend which reports directly to Prometheus via the: 
 
+- job_name: "goapp"
+  static_configs:
+    - targets: ["goapp:8000"]
 
+in the prometheus.yml file.
+
+Now I would like to talk about my Grafana dashboard and how Promtail & Loki are aggregating logs across my distributed system.
+
+![alt text](<assets/Screenshot from 2025-02-05 22-19-24.png>)
+
+These logs indicate that my SonarQube instance is successfully starting up, that all core components are initializing properly, my database connection is working, the quality profiles are being loaded successfully and my Loki query {container="/sonarqube"} is effectively filtering logs by:
+
+* Container name label matching "sonarqube"
+* Showing the last hour of data (based on my time range selection)
+* Displaying approximately 262 log entries
+* Performance Insights
+
+If we were to analyze what these logs mean health-wise it would go something like this:
+
+- a quick initialization time (most operations complete in milliseconds)
+- Successful component loading (22 components identified)
+- no error messages or warnings
+- Total bytes processed: 43.6 kB
+
+The Label browser in the image below also shows all my monitored containers:
+
+![alt text](<assets/Screenshot from 2025-02-05 22-18-53.png>)
+
+/cadvisor
+/db (PostgreSQL)
+/loki
+/nextapp
+/prometheus
+/promtail
+/sonarqube
+
+and the final dashboard: 
+
+![alt text](<assets/Screenshot from 2025-02-09 21-33-52.png>)
 
 
 # Folder Structure
@@ -181,15 +220,17 @@ Now I'd like to talk about my current observability system and really emphasize 
 
 
 
-
 # Brief Demo
+
+
+
 
 
 
 # Final Thoughts
 
-I am definitely missing a lot of things during the development of this project as I think it covered plenty of areas in the SDLC. All in all, it was a very steep learning curve, one that many people would've given up on, but it was definitely worth it in order to understand why being 
-Speaking of DevOps this project was just the beginning.
+I definitely learned a lot of aspects of the SDLC even though this was just a portfolio project. There are many more ways to improve and I am well aware of them but these kinds of undertakings have infinite ways to improve upon. After all it's a neverending process of constantly improving, optimizing and delivering. IN summary, this project was a very steep learning curve, one that many people would've given up on, but it was definitely worth it in order to understand only *half* the picture of being a good DevOps.
+
 
 
  
