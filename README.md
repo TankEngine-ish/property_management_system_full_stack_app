@@ -168,7 +168,7 @@ At the moment I am missing the distributed tracing piece in my stack. This can b
 
 Now I'd like to talk about my current observability system and really emphasize on the importance of cAdvisor for getting those fine, granular container metrics which help identify performance bottlenecks and resource constraints. 
 
-![alt text](<Screenshot from 2025-02-02 22-57-34.png>)
+![alt text](<assets/Screenshot from 2025-02-02 22-57-34.png>)
 
 
 
@@ -176,9 +176,8 @@ Now I'd like to talk about my current observability system and really emphasize 
 
 # Folder Structure
 
-[text](assets/fodler_structure_application.md)
 
-
+![alt text](<assets/Screenshot from 2025-03-24 11-14-20.png>)
 
 
 
