@@ -23,8 +23,10 @@ Above is a sample screenshot of some of the advice their platform gave me after 
 
 # Live Preview:
 
-![Demo](https://i.imgur.com/WIOzqMl.mp4)
+https://propertyapp.duckdns.org/ 
 
+(Keep in mind that this version of the platform is for public showing only. The actual website which has a bit more functionality and it's being used for my needs is deployed far away from here.)
+I have deployed this application via my Traefic Configuration https://github.com/TankEngine-ish/traefik_multi_app_hosting 
 
 ### The main function flow:
 
