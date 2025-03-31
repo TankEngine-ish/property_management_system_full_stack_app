@@ -23,7 +23,7 @@ Above is a sample screenshot of some of the advice their platform gave me after 
 
 # Live Preview:
 
-![Demo](https://imgur.com/WIOzqMl)
+![Demo](https://i.imgur.com/WIOzqMl.mp4)
 
 
 ### The main function flow:
