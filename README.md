@@ -237,14 +237,6 @@ While other services using modest amounts:
 ![alt text](<assets/Screenshot from 2025-03-24 11-14-20.png>)
 
 
-
-# Brief Demo of the Application
-
-
-
-
-
-
 # Final Thoughts
 
 I definitely learned a lot of aspects of the SDLC even though this was just a portfolio project. There are many more ways to improve and I am well aware of them but these kinds of undertakings have infinite ways to improve upon. After all it's a neverending process of constantly improving, optimizing and delivering. IN summary, this project was a very steep learning curve, one that many people would've given up on, but it was definitely worth it in order to understand only *half* the picture of being a good DevOps.
