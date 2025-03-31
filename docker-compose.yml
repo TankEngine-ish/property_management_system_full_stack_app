@@ -3,14 +3,16 @@ version: '3.8' # yes, I know that "version:"" is optional for Docker Compose v2 
 services:
   nextapp:
     container_name: nextapp
-    image: nextapp:1.0.8
+    image: nextapp:1.0.9
     build:
       context: ./frontend
       dockerfile: next.dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://property.localhost
     ports:
       - '3000:3000'
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_API_URL=http://property.localhost
     depends_on:
       - goapp
 

@@ -20,7 +20,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # EXPLICITLY SET THE API URL FOR NEXT.JS
-ENV NEXT_PUBLIC_API_URL=http://13.51.86.244
+ARG NEXT_PUBLIC_API_URL=https://propertyapp.duckdns.org
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
 # Create a file to verify the environment variable was set
 RUN echo "Using API URL: $NEXT_PUBLIC_API_URL" > /tmp/api_url.txt
