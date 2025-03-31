@@ -23,7 +23,7 @@ Above is a sample screenshot of some of the advice their platform gave me after 
 
 # Live Preview:
 
-<video controls src="assets/Screencast from 31.03.2025 17_29_58.mp4" title="VIDEO"></video>"></video>
+<video controls src="assets/Screencast from 31.03.2025 17_29_58.mp4" title="Title"></video>
 
 
 ### The main function flow:
