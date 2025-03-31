@@ -12,9 +12,6 @@ The application follows a three-tier architecture pattern (some would say it's e
 * CI/CD Pipeline (Jenkins): Automated testing and deployment
 * Observability Stack: Monitoring and logging
 
-# Live Preview:
-
-<video controls src="assets/Screencast from 31.03.2025 17_29_58.mp4" title="Title"></video>
 
 For the backend I tried to use modular structure as much as possible.
 I have defined plenty of constants to avoid hardcoding values, which is a good practice for maintainability. I gotta mention this, even though it would come later in my documentation, that some of the code edits I did were as a result of *Sonarqube*'s suggestions:
@@ -23,6 +20,10 @@ I have defined plenty of constants to avoid hardcoding values, which is a good p
 ![alt text](assets/sonarqube_test2.png)
 
 Above is a sample screenshot of some of the advice their platform gave me after I implemented its functionality in my Jenkins pipeline. It's pretty neat if you get tired of your preferred AI agent's suggestions. So what I've changed because of Sonar is I constructed HTTP Header Constants, Error Message Constants and a MIME (Multipurpose Internet Mail Extension) Type Constant.
+
+# Live Preview:
+
+<video controls src="assets/Screencast from 31.03.2025 17_29_58.mp4" title="VIDEO"></video>
 
 
 ### The main function flow:
