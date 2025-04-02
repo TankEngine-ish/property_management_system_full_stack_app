@@ -23,10 +23,15 @@ Above is a sample screenshot of some of the advice their platform gave me after 
 
 # Live Preview:
 
-https://propertyapp.duckdns.org/ 
+Live Preview via a direct link is currently disabled. Apologies.
+I can provide a YouTube link:
+
+https://www.youtube.com/watch?v=sS3QqCoMZuk 
 
 (Keep in mind that this version of the platform is for public showing only. The actual website which has a bit more functionality and it's being used for my needs is deployed far away from here.)
 I have deployed this application via my Traefic Configuration https://github.com/TankEngine-ish/traefik_multi_app_hosting 
+And yes, I could set up a VPS to forward traffic through WireGuard to my Traefik reverse proxy to hide my IP.
+And yes, I could also use Cloudflare DNS.
 
 ### The main function flow:
 
